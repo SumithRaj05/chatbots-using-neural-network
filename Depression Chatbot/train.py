@@ -2,9 +2,10 @@ import yaml
 import numpy as np
 from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Embedding, GlobalAveragePooling1D, Dense
 from tensorflow.keras.utils import to_categorical
 from sklearn.preprocessing import LabelEncoder
-from tensorflow.keras.models import load_model
 
 # Load dataset
 with open('depression.yml', 'r') as file:
@@ -30,21 +31,24 @@ label_encoder.fit(labels)
 encoded_labels = label_encoder.transform(labels)
 categorical_labels = to_categorical(encoded_labels)
 
-# Load the saved model
-model = load_model("model.keras")
+# Split data (this example uses all data for training for simplicity)
+X_train, y_train = padded_sequences, categorical_labels
 
-# Function to get a response
-def get_response(message):
-    sequence = tokenizer.texts_to_sequences([message])
-    padded = pad_sequences(sequence, maxlen=padded_sequences.shape[1], padding='post')
-    prediction = model.predict(padded)
-    intent = label_encoder.inverse_transform([np.argmax(prediction)])[0]
-    return intent
+# Define neural network architecture
+model = Sequential([
+    Embedding(input_dim=1000, output_dim=16, input_length=padded_sequences.shape[1]),
+    GlobalAveragePooling1D(),
+    Dense(24, activation='relu'),
+    Dense(len(label_encoder.classes_), activation='softmax')
+])
 
-user_input=""
-while user_input!="exit":
-    print()
-    user_input = str(input("query >> "))
-    predicted_intent = get_response(user_input)
-    print("\nresponse >> ", predicted_intent)
+model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
 
+# Train the model
+
+print("\nRecommended epoches: ", len(X_train), "\n")
+model.fit(X_train, y_train, epochs=70, verbose=1)
+
+model.save("model.keras")
+
+print("\nmodel saved in model.keras!")
