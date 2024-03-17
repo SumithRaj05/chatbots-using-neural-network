@@ -7,7 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import load_model
 
 # Load dataset
-with open('depression.yml', 'r') as file:
+with open('Depression Chatbot\depression.yml', 'r') as file:
     dataset = yaml.safe_load(file)
 
 # Extract conversations and responses
