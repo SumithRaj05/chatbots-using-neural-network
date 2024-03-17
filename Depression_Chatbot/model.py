@@ -7,7 +7,7 @@ from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import load_model
 
 # Load dataset
-with open('depression.yml', 'r') as file:
+with open('D:\\CHATBOTS_USING_NEURAL_NETWORK\\Depression_Chatbot\\depression.yml', 'r') as file:
     dataset = yaml.safe_load(file)
 
 # Extract conversations and responses
@@ -31,7 +31,7 @@ encoded_labels = label_encoder.transform(labels)
 categorical_labels = to_categorical(encoded_labels)
 
 # Load the saved model
-model = load_model("model.keras")
+model = load_model("D:\\CHATBOTS_USING_NEURAL_NETWORK\\Depression_Chatbot\\model.keras")
 
 # Function to get a response
 def get_response(message):
@@ -47,4 +47,3 @@ while user_input!="exit":
     user_input = str(input("query >> "))
     predicted_intent = get_response(user_input)
     print("\nresponse >> ", predicted_intent)
-
